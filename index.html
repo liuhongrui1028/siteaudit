@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiteAudit — Web Compliance Scanner for Agencies & SMBs</title>
+  <meta name="description" content="One-click accessibility, SEO, privacy & performance scanner. Export professional PDF reports in seconds. Free 3 scans/day.">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --text: #1a1a2e;
+      --text-secondary: #5f6368;
+      --bg: #ffffff;
+      --bg-alt: #f8f9fa;
+      --border: #e8eaed;
+      --success: #43a047;
+      --warning: #fb8c00;
+      --danger: #e53935;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background: var(--bg);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; font-weight: 800; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    nav a {
+      margin-left: 28px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--primary); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-large { padding: 14px 32px; font-size: 16px; }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+      background: linear-gradient(180deg, #f0f4ff 0%, #fff 100%);
+    }
+    .badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--primary), #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .hero-buttons .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .hero-buttons .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 32px; font-weight: 800; color: var(--danger); }
+    .stat-label { font-size: 13px; color: var(--text-secondary); }
+
+    /* Sections */
+    section { padding: 80px 0; }
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+
+    /* Problem */
+    .problem { background: var(--bg-alt); }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .problem-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .problem-card .icon { font-size: 36px; margin-bottom: 12px; }
+    .problem-card h3 { font-size: 18px; margin-bottom: 8px; }
+    .problem-card p { font-size: 14px; color: var(--text-secondary); }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      border-radius: 12px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+    .feature-card .icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 20px; margin-bottom: 8px; }
+    .feature-card p { color: var(--text-secondary); font-size: 15px; }
+    .icon-a11y { background: #fce4ec; }
+    .icon-seo { background: #e8f5e9; }
+    .icon-privacy { background: #e3f2fd; }
+    .icon-perf { background: #fff3e0; }
+
+    /* Screenshot */
+    .screenshot { background: var(--bg-alt); text-align: center; }
+    .screenshot-img {
+      max-width: 720px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      border: 1px solid var(--border);
+    }
+    .screenshot-note {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      border-radius: 16px;
+      padding: 36px;
+      border: 2px solid var(--border);
+      position: relative;
+    }
+    .pricing-card.pro {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, #f0f4ff 0%, #fff 100%);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .pricing-card h3 { font-size: 22px; margin-bottom: 8px; }
+    .price { font-size: 42px; font-weight: 800; margin: 16px 0; }
+    .price span { font-size: 16px; color: var(--text-secondary); font-weight: 500; }
+    .pricing-card ul { list-style: none; margin: 24px 0; }
+    .pricing-card ul li {
+      padding: 8px 0;
+      font-size: 15px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing-card ul li::before {
+      content: "✓";
+      color: var(--success);
+      font-weight: 700;
+    }
+    .pricing-card .btn { width: 100%; margin-top: 8px; }
+
+    /* Steps */
+    .steps { background: var(--bg-alt); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .step {
+      text-align: center;
+    }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .step h3 { font-size: 18px; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--text-secondary); }
+
+    /* FAQ */
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+    }
+    .faq-item h4 {
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-item h4::after {
+      content: "+";
+      font-size: 20px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .faq-item.active h4::after { content: "−"; }
+    .faq-item p {
+      margin-top: 12px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      display: none;
+    }
+    .faq-item.active p { display: block; }
+
+    /* CTA Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      text-align: center;
+      padding: 80px 0;
+    }
+    .cta-banner h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .cta-banner p {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 32px;
+    }
+    .cta-banner .btn {
+      background: #fff;
+      color: var(--primary);
+      font-size: 16px;
+      padding: 14px 32px;
+    }
+    .cta-banner .btn:hover { background: #f0f4ff; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    footer a { color: var(--text-secondary); text-decoration: none; margin: 0 12px; }
+    footer a:hover { color: var(--primary); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .hero p { font-size: 18px; }
+      .problem-grid, .features-grid, .pricing-grid, .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn { width: 100%; max-width: 280px; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="#" class="logo">
+        <div class="logo-icon">S</div>
+        SiteAudit
+      </a>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="privacy-policy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge">Chrome Extension — Free to try</div>
+      <h1>Don't Let Your Website <span>Get You Sued</span></h1>
+      <p>One-click accessibility, SEO, privacy & performance scanner. Export professional PDF reports in seconds. Starting at $0.</p>
+      <div class="hero-buttons">
+        <a href="https://chrome.google.com/webstore/detail/siteaudit" class="btn btn-primary btn-large" target="_blank">Add to Chrome — It's Free</a>
+        <a href="#how-it-works" class="btn btn-secondary btn-large">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">3,000+</div>
+          <div class="stat-label">ADA lawsuits in 2025</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">$5K–$20K</div>
+          <div class="stat-label">Average settlement</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">30 sec</div>
+          <div class="stat-label">To scan any page</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="problem">
+    <div class="container">
+      <h2 class="section-title">The Problem</h2>
+      <p class="section-subtitle">Small businesses are the biggest target — and the least prepared.</p>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">💸</div>
+          <h3>Enterprise tools cost $500+/mo</h3>
+          <p>Siteimprove, Deque, and others price out freelancers and small agencies.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">⚖️</div>
+          <h3>67% target businesses under $25M</h3>
+          <p>ADA lawsuits in 2025 hit small businesses hardest. Most never saw it coming.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">📄</div>
+          <h3>Free tools give unreadable output</h3>
+          <p>WAVE and Lighthouse are great — but clients need a professional report, not raw JSON.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title">4 Scans in 1 Click</h2>
+      <p class="section-subtitle">All inside your browser. No data sent to our servers.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon icon-a11y">♿</div>
+          <h3>Accessibility</h3>
+          <p>Detects WCAG 2.1 AA violations: contrast issues, missing alt text, improper headings, keyboard traps. Powered by axe-core (same engine as Google Lighthouse).</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon icon-seo">🔍</div>
+          <h3>SEO</h3>
+          <p>Checks page titles, meta descriptions, H1 tags, image alt attributes, Open Graph tags, canonical URLs, and structured data.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon icon-privacy">🔒</div>
+          <h3>Privacy</h3>
+          <p>Verifies HTTPS, detects cookie consent banners, privacy policy links, and third-party trackers (Google Analytics, Facebook Pixel, Hotjar, etc.).</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon icon-perf">⚡</div>
+          <h3>Performance</h3>
+          <p>Measures page load time, flags oversized images, and counts third-party scripts that slow down your site.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshot -->
+  <section class="screenshot">
+    <div class="container">
+      <h2 class="section-title">Professional PDF Reports</h2>
+      <p class="section-subtitle">Client-ready reports in 10 seconds. No formatting required.</p>
+      <img src="screenshot-helper.html" alt="SiteAudit PDF Report Preview" class="screenshot-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div style="display:none;padding:60px 20px;background:#fff;border-radius:12px;border:2px dashed var(--border);color:var(--text-secondary);">
+        <div style="font-size:48px;margin-bottom:12px;">📄</div>
+        <div style="font-size:18px;font-weight:700;">PDF Report Preview</div>
+        <div style="font-size:14px;margin-top:8px;">Overall compliance score · Severity-tagged findings · Remediation guidance</div>
+      </div>
+      <p class="screenshot-note">Replace this with your actual screenshot by uploading a PNG and updating the <code>src</code> above.</p>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="steps" id="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">From scan to report in three simple steps.</p>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Install the Extension</h3>
+          <p>Add SiteAudit to Chrome in one click. No signup, no credit card.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Scan Any Page</h3>
+          <p>Open the website you want to audit, click the SiteAudit icon, and hit "Scan".</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Export & Share</h3>
+          <p>View results instantly. Upgrade to Pro to export a branded PDF report.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="container">
+      <h2 class="section-title">Simple Pricing</h2>
+      <p class="section-subtitle">Start free. Upgrade when you need PDF exports.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0 <span>/ forever</span></div>
+          <ul>
+            <li>3 scans per day</li>
+            <li>Full scan results in popup</li>
+            <li>Accessibility, SEO, Privacy, Performance</li>
+            <li>No signup required</li>
+          </ul>
+          <a href="https://chrome.google.com/webstore/detail/siteaudit" class="btn btn-secondary" target="_blank">Install Free</a>
+        </div>
+        <div class="pricing-card pro">
+          <div class="pricing-badge">Recommended</div>
+          <h3>Pro</h3>
+          <div class="price">$19 <span>/ month</span></div>
+          <ul>
+            <li>Unlimited scans</li>
+            <li>Professional PDF export</li>
+            <li>Client-ready reports with branding</li>
+            <li>Severity tags & fix guidance</li>
+            <li>Cancel anytime</li>
+          </ul>
+          <a href="https://siteaudit.gumroad.com/l/pro" class="btn btn-primary" target="_blank">Upgrade to Pro</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h4>How accurate is the accessibility scan?</h4>
+          <p>We use <strong>axe-core</strong>, the industry-standard engine from Deque (also used by Google Lighthouse and Microsoft Accessibility Insights). Automated scans catch approximately 30% of WCAG issues — perfect for a fast first pass, but not a replacement for manual testing or legal counsel.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is my data safe?</h4>
+          <p><strong>100%.</strong> All scanning happens locally inside your browser. We never see your URLs, HTML, or scan results. No tracking, no analytics, no remote servers.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I cancel Pro anytime?</h4>
+          <p>Yes. There are no contracts, no setup fees, and no cancellation penalties. You control your subscription through Gumroad.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Who is SiteAudit for?</h4>
+          <p>Freelance developers, digital agencies, small business owners, and anyone who manages a website and needs fast, affordable compliance insights.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Does this protect me from ADA lawsuits?</h4>
+          <p>SiteAudit helps you identify and fix common accessibility issues. However, it does not guarantee legal compliance or replace a professional manual audit. We recommend using it as a screening tool, then consulting an accessibility expert for high-risk sites.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2>Scan your first page in 30 seconds</h2>
+      <p>Join thousands of developers and agencies using SiteAudit.</p>
+      <a href="https://chrome.google.com/webstore/detail/siteaudit" class="btn" target="_blank">Add to Chrome — It's Free</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p style="margin-bottom: 12px;">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="mailto:support@siteaudit.pro">Contact</a>
+      </p>
+      <p>© 2026 SiteAudit. Built for developers, agencies, and small businesses.</p>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-item h4').forEach(q => {
+      q.addEventListener('click', () => {
+        q.parentElement.classList.toggle('active');
+      });
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>
